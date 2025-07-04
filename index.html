@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>精美記帳 App v3.3</title>
+    <title>精美記帳 App v3.9.3</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'><path fill='%234a90e2' d='M240-120q-33 0-56.5-23.5T160-200v-560q0-33 23.5-56.5T240-840h320l240 240v320q0 33-23.5 56.5T720-120H240Zm280-520v-200H240v560h480v-360H520ZM440-440h160v-60H440v60Zm0 120h160v-60H440v60Zm-200-320h400v-60H240v60Zm280-40Z'/></svg>">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,6 +107,8 @@
         .btn .material-symbols-outlined { margin-right: 0.5rem; }
         .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
+        html[data-theme='dark'] .btn-primary:disabled { background-color: #30363d; color: #8b949e; }
         .btn-secondary { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }
         .btn-secondary:hover { background-color: var(--border-color); }
         .btn-danger { background-color: var(--expense-color); color: white; }
@@ -119,7 +121,7 @@
         /* --- 表單樣式 --- */
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-light); }
-        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background-color: var(--bg-light); color: var(--text-color); transition: border-color 0.2s, background-color 0.3s; }
+        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background-color: var(--bg-light); color: var(--text-color); transition: border-color 0.2s, background-color 0.3s, box-shadow 0.2s; }
         .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-light); }
         .form-group .radio-group { display: flex; gap: 1rem; }
         .form-group .radio-group label { flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
@@ -148,6 +150,7 @@
 
         .transaction-filters { margin-bottom: 1rem; }
         .search-bar { position: relative; margin-bottom: 0.75rem; }
+        .search-bar input:focus { box-shadow: 0 0 0 3px var(--primary-light); border-color: var(--primary-color); }
         .search-bar input { width: 100%; padding: 0.75rem; padding-left: 2.5rem; }
         .search-bar .material-symbols-outlined { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
         .category-filter-tags { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; }
@@ -156,10 +159,13 @@
         .filter-tag { padding: 0.25rem 0.75rem; border-radius: 16px; background-color: var(--bg-color); border: 1px solid var(--border-color); font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
         .filter-tag.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
         
-        .transaction-list-item { display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border-color); transition: background-color 0.2s, border-color 0.3s; cursor: pointer; }
+        .transaction-list-item { display: flex; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border-color); transition: background-color 0.2s, border-color 0.3s, opacity 0.2s; cursor: grab; }
         .transaction-list-item:last-child { border-bottom: none; }
         .transaction-list-item:hover { background-color: var(--primary-light); }
+        .transaction-list-item.dragging { opacity: 0.5; background: var(--primary-light); }
+        .transaction-list-item.drag-over { border-top: 2px solid var(--primary-color); }
         html[data-theme='dark'] .transaction-list-item:hover { background-color: #21262d; }
+        .transaction-list-item mark { background-color: var(--accent-color); color: #fff; padding: 2px 4px; border-radius: 3px; }
         .transaction-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem; color: white; flex-shrink: 0; }
         .transaction-icon.income { background-color: var(--income-color); }
         .transaction-icon.expense { background-color: var(--expense-color); }
@@ -171,9 +177,7 @@
         .transaction-info .amount.income { color: var(--income-color); }
         .transaction-info .amount.expense { color: var(--expense-color); }
         .transaction-info .date { color: #888; font-size: 0.8rem; }
-        .transaction-group { margin-bottom: 1rem; }
-        .transaction-group-header { padding: 0.5rem 1rem; background-color: var(--bg-color); color: var(--text-light); font-weight: 700; position: sticky; top: -1.5rem; z-index: 10; transition: background-color 0.3s, color 0.3s; }
-
+        
         .report-controls-container .report-controls { display: flex; flex-direction: column; gap: 1rem; }
         .monthly-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; text-align: center; }
         .stat-item h4 { font-size: 0.9rem; color: var(--text-light); font-weight: 500; }
@@ -182,6 +186,26 @@
         .stat-item p.expense { color: var(--expense-color); }
         .stat-item p.balance { color: var(--primary-color); }
         .chart-container { position: relative; height: 300px; width: 100%; margin-top: 1rem; }
+        
+        .budget-item { margin-bottom: 1rem; }
+        .budget-item:last-child { margin-bottom: 0; }
+        .progress-bar-container { width: 100%; background-color: var(--bg-color); border-radius: 4px; overflow: hidden; height: 8px; margin: 0.5rem 0; }
+        .progress-bar { height: 100%; background-color: var(--primary-color); border-radius: 4px; transition: width 0.3s ease-in-out; }
+        .progress-bar.warning { background-color: var(--accent-color); }
+        .progress-bar.danger { background-color: var(--expense-color); }
+        .budget-text { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); }
+
+        #budget-form-container { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 600px) { #budget-form-container { grid-template-columns: 1fr 1fr; } }
+        .budget-card { border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; }
+        .budget-card-header { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+        .budget-input-area { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+        .budget-input-area span { font-size: 1.2rem; color: var(--text-light); }
+        .budget-input { font-size: 1.2rem; font-weight: 500; border: none; border-bottom: 2px solid var(--border-color); border-radius: 0; padding: 0.25rem 0; width:100%; background:transparent; }
+        .budget-input:focus { box-shadow: none; border-bottom-color: var(--primary-color); }
+        .budget-summary-text { display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 0.5rem; }
+        .budget-remaining.negative { color: var(--expense-color); font-weight: 700; }
+        .management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
 
         .modal { position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
@@ -194,38 +218,37 @@
         .modal-actions { display: flex; gap: 1rem; margin-top: 1rem; }
         .modal-actions .btn { flex: 1; }
         
+        /* Animation Modal Styles */
+        #animation-modal .modal-content { max-width: 600px; }
+        .animation-display-area { min-height: 120px; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .animation-display-area .tx-item { animation: anim-tx-fade-in 0.5s ease; }
+        @keyframes anim-tx-fade-in { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animation-display-area .tx-date { font-size: 0.9rem; color: var(--text-light); }
+        .animation-display-area .tx-desc { font-size: 1.2rem; font-weight: 500; margin: 0.25rem 0; }
+        .animation-display-area .tx-amount.income { color: var(--income-color); font-weight: 700; font-size: 1.5rem; }
+        .animation-display-area .tx-amount.expense { color: var(--expense-color); font-weight: 700; font-size: 1.5rem; }
+        .animation-balance-area { margin-top: 1rem; text-align: center; }
+        .animation-balance-area h4 { color: var(--text-light); font-weight: 500; }
+        .animation-balance-area p { font-size: 2rem; font-weight: 700; color: var(--primary-color); }
+        .animation-progress-bar { height: 6px; background-color: var(--primary-color); width: 0%; border-radius: 3px; transition: width 0.3s ease; }
+        .animation-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; gap: 1rem; }
+        .animation-controls .speed-control { display: flex; align-items: center; gap: 0.5rem; }
+
         .no-data { text-align: center; padding: 3rem 1rem; color: #888; }
         .no-data .material-symbols-outlined { font-size: 4rem; margin-bottom: 1rem; }
 
         #nav-add-desktop { display: none; }
         .desktop-only-nav-item { display: none; }
         
-        /* --- ✨ 裝置優化 (平板/桌面) --- */
         @media (min-width: 801px) {
             body { display: flex; align-items: center; justify-content: center; padding: 2rem; }
-
-            #app-wrapper {
-                flex-direction: row; height: 100%; max-height: 90vh;
-                width: 100%; max-width: 1200px;
-                background-color: var(--bg-light); box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-                border-radius: 16px; overflow: hidden;
-            }
-
+            #app-wrapper { flex-direction: row; height: 100%; max-height: 90vh; width: 100%; max-width: 1200px; background-color: var(--bg-light); box-shadow: 0 8px 32px rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; }
             #app-container { flex-direction: row; max-width: none; }
-            
-            #bottom-nav {
-                position: static; flex-direction: column; justify-content: flex-start;
-                align-items: stretch;
-                height: 100%; width: var(--sidebar-width);
-                border-top: none; border-right: 1px solid var(--border-color);
-                padding: 1.5rem 1rem; gap: 0.5rem;
-            }
-
+            #bottom-nav { position: static; flex-direction: column; justify-content: flex-start; align-items: stretch; height: 100%; width: var(--sidebar-width); border-top: none; border-right: 1px solid var(--border-color); padding: 1.5rem 1rem; gap: 0.5rem; overflow-y: auto; }
             .nav-btn { flex-direction: row; justify-content: flex-start; padding: 0.75rem 1rem; border-radius: 8px; flex: 0; }
             .nav-btn .material-symbols-outlined { margin-right: 1rem; }
             .nav-btn-label { font-size: 1rem; }
             .nav-btn.active { background-color: var(--primary-light); }
-            
             #nav-add-mobile { display: none; }
             #nav-add-desktop { display: flex; width: 100%; margin-bottom: 1rem; }
             .desktop-only-nav-item { display: flex; }
@@ -234,12 +257,9 @@
             #theme-toggle-desktop .time-toggle { margin-bottom: 0; }
             .mobile-only-card { display: none; }
             .mobile-only-back-btn { display: none; }
-
             main { flex: 1; padding: 2rem; padding-bottom: 2rem; }
-            
             #page-dashboard .dashboard-grid { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; align-items: flex-start; }
             #page-reports .reports-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: flex-start; }
-            #page-others .others-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
             .report-controls-container .report-controls { flex-direction: row; }
         }
     </style>
@@ -254,13 +274,12 @@
             <button id="nav-add-mobile"><span class="material-symbols-outlined">add</span></button> 
             <button class="nav-btn" data-page="reports"><span class="material-symbols-outlined">analytics</span><span class="nav-btn-label">報表</span></button>
             
-            <!-- Desktop-only nav items -->
+            <button class="nav-btn desktop-only-nav-item" data-page="financial-management"><span class="material-symbols-outlined">account_balance</span><span class="nav-btn-label">財務管理</span></button>
             <button class="nav-btn desktop-only-nav-item" data-page="categories"><span class="material-symbols-outlined">sell</span><span class="nav-btn-label">類別管理</span></button>
             <button class="nav-btn desktop-only-nav-item" data-page="calculator"><span class="material-symbols-outlined">calculate</span><span class="nav-btn-label">理財計算機</span></button>
             
             <button class="nav-btn" data-page="others"><span class="material-symbols-outlined">more_horiz</span><span class="nav-btn-label">其他</span></button>
 
-            <!-- Desktop-only theme switcher -->
             <div id="theme-toggle-desktop" class="desktop-only-nav-item">
                 <span class="nav-btn-label">外觀設定</span>
                 <div class="time-toggle theme-toggle">
@@ -278,12 +297,14 @@
                     <div class="dashboard-grid">
                         <div class="dashboard-col-1">
                             <div class="card balance-card"><h2>目前餘額</h2><p id="dashboard-balance">$0</p></div>
+                            <div id="salary-claim-container"></div>
                             <div class="time-toggle"><button class="time-toggle-btn active" data-period="day">日</button><button class="time-toggle-btn" data-period="month">月</button><button class="time-toggle-btn" data-period="year">年</button></div>
                             <div class="summary-grid">
                                 <div class="summary-card income"><h3>總收入</h3><p id="dashboard-income">$0</p></div>
                                 <div class="summary-card expense"><h3>總支出</h3><p id="dashboard-expense">$0</p></div>
                                 <div class="summary-card balance"><h3>淨收支</h3><p id="dashboard-net-income">$0</p></div>
                             </div>
+                            <div id="budget-tracking-container" class="card"></div>
                         </div>
                         <div class="dashboard-col-2">
                              <div class="card" style="height: 100%;"><h3>收支趨勢</h3><div class="chart-container" style="height: 90%;"><canvas id="dashboard-chart"></canvas></div></div>
@@ -317,7 +338,7 @@
                 <!-- 其他 Page -->
                 <div id="page-others" class="page">
                     <div class="page-header"><span class="material-symbols-outlined">more_horiz</span>其他</div>
-                    <div class="others-grid">
+                    <div class="management-grid">
                          <div class="card mobile-only-card">
                             <h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">contrast</span>外觀設定</h3>
                             <p style="margin-bottom: 1rem; color: var(--text-light);">選擇您喜歡的應用程式外觀。</p>
@@ -325,6 +346,11 @@
                                 <button class="time-toggle-btn" data-theme-value="light"><span class="material-symbols-outlined" style="margin-right:0.5rem; font-size: 1.2rem;">light_mode</span>淺色</button>
                                 <button class="time-toggle-btn" data-theme-value="dark"><span class="material-symbols-outlined" style="margin-right:0.5rem; font-size: 1.2rem;">dark_mode</span>深色</button>
                             </div>
+                        </div>
+                        <div class="card mobile-only-card">
+                            <h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">account_balance</span>財務管理</h3>
+                            <p style="margin-bottom: 1rem; color: var(--text-light);">管理您的薪水、預算與每月盈餘。</p>
+                            <button id="go-to-financial-management-btn" class="btn btn-secondary" style="width: 100%;">前往財務管理</button>
                         </div>
                         <div class="card mobile-only-card">
                             <h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">calculate</span>理財計算機</h3>
@@ -337,14 +363,14 @@
                             <button id="go-to-categories-btn" class="btn btn-secondary" style="width: 100%;">前往類別管理</button>
                         </div>
                         <div class="card">
+                            <h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">movie</span>本月動畫</h3>
+                            <p style="margin-bottom: 1rem; color: var(--text-light);">以動畫方式回顧您本月的消費歷程。</p>
+                            <button id="play-animation-btn" class="btn btn-secondary" style="width: 100%;">播放本月動畫</button>
+                        </div>
+                        <div class="card">
                             <h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">database</span>資料管理</h3>
                             <p style="margin-bottom: 1rem; color: var(--text-light);">匯出、匯入或清除您的記帳資料。</p>
                             <button id="go-to-data-btn" class="btn btn-secondary" style="width: 100%;">前往資料管理</button>
-                        </div>
-                        <div class="card">
-                            <h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">history</span>更新紀錄</h3>
-                            <p style="margin-bottom: 1rem; color: var(--text-light);">查看應用程式的版本更新歷史。</p>
-                            <button id="go-to-changelog-btn" class="btn btn-secondary" style="width: 100%;">查看紀錄</button>
                         </div>
                         <div class="card">
                             <h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">info</span>關於本程式</h3>
@@ -355,11 +381,14 @@
                 </div>
 
                 <!-- 子頁面 (隱藏) -->
+                <div id="page-financial-management" class="page"></div>
                 <div id="page-categories" class="page"></div>
                 <div id="page-data" class="page"></div>
                 <div id="page-about" class="page"></div>
                 <div id="page-calculator" class="page"></div>
-                <div id="page-changelog" class="page"></div>
+                <div id="page-budgets" class="page"></div>
+                <div id="page-salary" class="page"></div>
+                <div id="page-surplus" class="page"></div>
             </main>
         </div>
     </div>
@@ -367,6 +396,7 @@
     <!-- Modals (彈出視窗) -->
     <div id="transaction-modal" class="modal"></div>
     <div id="category-modal" class="modal"></div>
+    <div id="animation-modal" class="modal"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -378,12 +408,22 @@ document.addEventListener('DOMContentLoaded', () => {
         categories: [
             { id: 1, name: '餐飲' }, { id: 2, name: '交通' }, { id: 3, name: '購物' },
             { id: 4, name: '娛樂' }, { id: 5, name: '薪資' }, { id: 6, name: '投資' },
-        ]
+        ],
+        budgets: {},
+        salary: { amount: 0, categoryId: null, showClaimButton: false, lastClaimedMonth: null }
     };
     
     let chartInstances = {};
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => document.querySelectorAll(selector);
+    let draggedItem = null;
+    
+    // Animation state
+    let animationInterval = null;
+    let animationIndex = 0;
+    let animationTransactions = [];
+    let animationSpeed = 1500;
+    let animationRunningBalance = 0;
 
     // --- 初始化 ---
     function init() {
@@ -405,12 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (darkBtn) darkBtn.classList.toggle('active', theme === 'dark');
         });
 
-        if ($('#page-dashboard').classList.contains('active')) {
-             renderDashboard();
-        }
-        if ($('#page-reports').classList.contains('active')) {
-            renderReportData();
-        }
+        if ($('#page-dashboard').classList.contains('active')) renderDashboard();
+        if ($('#page-reports').classList.contains('active')) renderReportData();
     }
 
     function loadTheme() {
@@ -426,6 +462,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedData) data = JSON.parse(savedData);
         if (!data.categories) data.categories = [];
         if (!data.transactions) data.transactions = [];
+        if (!data.budgets) data.budgets = {};
+        
+        if (!data.salary) {
+            data.salary = { amount: 0, categoryId: null, showClaimButton: false, lastClaimedMonth: null };
+        }
+        if (typeof data.salary.showClaimButton === 'undefined') {
+            data.salary.showClaimButton = false;
+            data.salary.lastClaimedMonth = data.salary.lastAutoAddMonth || null;
+            delete data.salary.autoAdd;
+            delete data.salary.autoAddDay;
+            delete data.salary.lastAutoAddMonth;
+        }
+
+        if (data.transactions.length > 0 && typeof data.transactions[0].order === 'undefined') {
+            reindexOrder();
+            saveData();
+        }
+    }
+    
+    function reindexOrder() {
+        data.transactions.forEach((t, index) => { t.order = index; });
     }
 
     // --- 導航 ---
@@ -438,8 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navButton) navButton.classList.add('active');
 
         const isDesktop = window.innerWidth > 800;
-        $('#bottom-nav').style.display = isSubPage ? 'none' : (isDesktop ? 'flex' : 'flex');
-        
         if (isDesktop) {
             $('#app-wrapper').style.flexDirection = 'row';
             $('#bottom-nav').style.display = 'flex';
@@ -447,13 +502,14 @@ document.addEventListener('DOMContentLoaded', () => {
              $('#bottom-nav').style.display = isSubPage ? 'none' : 'flex';
         }
         
-        if (!isSubPage) { $('#app-container').style.display = 'flex'; }
-        
         switch (pageId) {
             case 'dashboard': updateAllDashboard(); break;
             case 'transactions': updateAllTransactions(); break;
             case 'categories': renderCategories(); break;
             case 'reports': updateAllReports(); break;
+            case 'budgets': renderBudgets(); break;
+            case 'salary': renderSalaryManagement(); break;
+            case 'surplus': renderSurplusManagement(); break;
         }
     }
     
@@ -462,7 +518,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const activePageElement = $('.page.active');
         if (activePageElement) {
             const activePageId = activePageElement.id.replace('page-', '');
-            const isSubPage = ['categories', 'data', 'about', 'calculator', 'changelog'].includes(activePageId);
+            const mainPages = ['dashboard', 'transactions', 'reports', 'financial-management', 'others'];
+            const desktopNavPages = ['categories', 'calculator'];
+            const isSubPage = !mainPages.includes(activePageId) && !desktopNavPages.includes(activePageId);
             navigateTo(activePageId, isSubPage);
         } else {
             navigateTo('dashboard');
@@ -470,13 +528,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderSubPages() {
-        $('#page-categories').innerHTML = `<button class="btn btn-secondary back-btn mobile-only-back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回其他</button><div class="page-header"><span class="material-symbols-outlined">sell</span>類別管理</div><div class="card"><button id="add-category-btn" class="btn btn-primary" style="width: 100%;"><span class="material-symbols-outlined">add_circle</span>新增類別</button></div><div class="card"><div id="category-list"></div></div>`;
-        $('#page-data').innerHTML = `<button class="btn btn-secondary back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回其他</button><div class="page-header"><span class="material-symbols-outlined">database</span>資料管理</div><div class="card"><h3>匯出資料</h3><p style="margin-bottom: 1rem; color: var(--text-light);">將您的所有資料匯出成 JSON 檔備份。</p><button id="export-data-btn" class="btn btn-primary"><span class="material-symbols-outlined">file_download</span>匯出 JSON</button></div><div class="card"><h3>匯入資料</h3><p style="margin-bottom: 1rem; color: var(--text-light);">從 JSON 檔匯入資料。注意：這將覆蓋您目前所有資料！</p><button id="import-data-btn" class="btn btn-secondary"><span class="material-symbols-outlined">file_upload</span>匯入 JSON</button><input type="file" id="import-file-input" accept=".json" style="display: none;"></div><div class="card"><h3>清除所有資料</h3><p style="margin-bottom: 1rem; color: var(--text-light);">永久刪除所有交易和類別，無法復原。</p><button id="clear-data-btn" class="btn btn-danger"><span class="material-symbols-outlined">delete_forever</span>清除資料</button></div>`;
-        $('#page-about').innerHTML = `<button class="btn btn-secondary back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回其他</button><div class="page-header"><span class="material-symbols-outlined">info</span>關於</div><div class="card"><h2>精美記帳 App v3.3</h2><p>一個功能齊全、美觀高效的單一 HTML 檔案記帳應用程式。</p><br><h4>核心特色：</h4><ul><li><strong>無需安裝</strong>：單一 HTML 檔案，下載即可使用。</li><li><strong>本地儲存</strong>：所有資料安全地儲存在您的瀏覽器中。</li><li><strong>響應式設計</strong>：完美適配手機、平板和桌面電腦，提供專屬優化介面。</li><li><strong>主題模式</strong>：支援淺色與深色模式，並記憶您的選擇。</li><li><strong>豐富圖表與工具</strong>：視覺化您的財務狀況，並內建理財計算機。</li><li><strong>資料自由</strong>：隨時可以匯出和匯入您的資料。</li></ul></div>`;
-        $('#page-calculator').innerHTML = `<button class="btn btn-secondary back-btn mobile-only-back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回其他</button><div class="page-header"><span class="material-symbols-outlined">calculate</span>理財計算機</div><div class="time-toggle" id="calculator-tabs" style="margin-bottom: 1.5rem;"><button class="time-toggle-btn active" data-calculator="compound">複利計算</button><button class="time-toggle-btn" data-calculator="loan">貸款月付金</button><button class="time-toggle-btn" data-calculator="roi">投資報酬率 (ROI)</button></div><div id="calculator-content"><div class="calculator-pane active" data-pane="compound"><div class="card"><h3>複利計算</h3><form id="compound-interest-form"><div class="form-group"><label for="ci-principal">初始本金 ($)</label><input type="number" id="ci-principal" value="10000" required></div><div class="form-group"><label for="ci-rate">年利率 (%)</label><input type="number" id="ci-rate" value="5" step="0.1" required></div><div class="form-group"><label for="ci-years">投資年期 (年)</label><input type="number" id="ci-years" value="10" required></div><div class="form-group"><label for="ci-compound-freq">複利計算頻率</label><select id="ci-compound-freq"><option value="1">每年</option><option value="2">每半年</option><option value="4">每季</option><option value="12" selected>每月</option></select></div><button type="submit" class="btn btn-primary" style="width:100%;">計算</button></form><div id="ci-result" style="margin-top: 1.5rem; display: none;"><h4>計算結果</h4><p>未來總值：<strong id="ci-future-value" style="font-size: 1.5rem; color: var(--primary-color);"></strong></p><p>總利息：<strong id="ci-total-interest"></strong></p></div></div></div><div class="calculator-pane" data-pane="loan" style="display:none;"><div class="card"><h3>貸款月付金計算</h3><form id="loan-form"><div class="form-group"><label for="loan-amount">貸款總額 ($)</label><input type="number" id="loan-amount" value="500000" required></div><div class="form-group"><label for="loan-rate">年利率 (%)</label><input type="number" id="loan-rate" value="3" step="0.01" required></div><div class="form-group"><label for="loan-term">貸款期數 (年)</label><input type="number" id="loan-term" value="30" required></div><button type="submit" class="btn btn-primary" style="width:100%;">計算</button></form><div id="loan-result" style="margin-top: 1.5rem; display: none;"><h4>計算結果</h4><p>每月應付金額：<strong id="loan-monthly-payment" style="font-size: 1.5rem; color: var(--primary-color);"></strong></p><p>總支付金額：<strong id="loan-total-payment"></strong></p><p>總利息支出：<strong id="loan-total-interest"></strong></p></div></div></div><div class="calculator-pane" data-pane="roi" style="display:none;"><div class="card"><h3>投資報酬率 (ROI) 計算</h3><form id="roi-form"><div class="form-group"><label for="roi-initial">初始投資金額 ($)</label><input type="number" id="roi-initial" value="10000" required></div><div class="form-group"><label for="roi-final">最終價值 ($)</label><input type="number" id="roi-final" value="15000" required></div><button type="submit" class="btn btn-primary" style="width:100%;">計算</button></form><div id="roi-result" style="margin-top: 1.5rem; display: none;"><h4>計算結果</h4><p>投資報酬率 (ROI)：<strong id="roi-percentage" style="font-size: 1.5rem; color: var(--primary-color);"></strong></p><p>淨利潤：<strong id="roi-net-profit"></strong></p></div></div></div></div>`;
-        $('#page-changelog').innerHTML = `<button class="btn btn-secondary back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回其他</button><div class="page-header"><span class="material-symbols-outlined">history</span>更新紀錄</div><div class="card"><h3>Version 3.3</h3><ul><li><strong>響應式介面優化</strong>：在電腦版檢視時，將「類別管理」、「理財計算機」與「外觀設定」移至左側導覽列，以供快速存取。手機版則維持不變。</li></ul></div><div class="card"><h3>Version 3.2</h3><ul><li><strong>報表增強</strong>：報表頁面新增「每日」、「每月」、「每年」統計標籤頁。</li><li><strong>新增更新紀錄</strong>：在「其他」頁面中新增此更新紀錄頁面。</li></ul></div><div class="card"><h3>Version 3.1</h3><ul><li><strong>儀表板增強</strong>：儀表板新增「淨收支」卡片，並根據正負值顯示不同顏色。</li></ul></div><div class="card"><h3>Version 3.0</h3><ul><li><strong>新增主題模式</strong>：在「其他」頁面中加入淺色/深色模式切換。</li><li><strong>新增理財計算機</strong>：提供複利、貸款、投資報酬率計算功能。</li><li><strong>頁面結構調整</strong>：「管理」頁面更名為「其他」。</li></ul></div>`;
+        $('#page-financial-management').innerHTML = `<button class="btn btn-secondary back-btn mobile-only-back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回</button><div class="page-header"><span class="material-symbols-outlined">account_balance</span>財務管理</div><div class="management-grid"><div class="card"><h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">savings</span>預算管理</h3><p style="margin-bottom: 1rem; color: var(--text-light);">設定並追蹤您的每月類別預算。</p><button class="btn btn-secondary" data-target-page="budgets" style="width: 100%;">前往預算管理</button></div><div class="card"><h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">payments</span>薪水管理</h3><p style="margin-bottom: 1rem; color: var(--text-light);">設定您的主要月收入來源。</p><button class="btn btn-secondary" data-target-page="salary" style="width: 100%;">前往薪水管理</button></div><div class="card"><h3><span class="material-symbols-outlined" style="vertical-align: bottom; margin-right: 0.5rem;">trending_up</span>盈餘管理</h3><p style="margin-bottom: 1rem; color: var(--text-light);">查看您的每月財務盈餘或赤字。</p><button class="btn btn-secondary" data-target-page="surplus" style="width: 100%;">前往盈餘管理</button></div></div>`;
+        $('#page-categories').innerHTML = `<button class="btn btn-secondary back-btn mobile-only-back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回</button><div class="page-header"><span class="material-symbols-outlined">sell</span>類別管理</div><div class="card"><button id="add-category-btn" class="btn btn-primary" style="width: 100%;"><span class="material-symbols-outlined">add_circle</span>新增類別</button></div><div class="card"><div id="category-list"></div></div>`;
+        $('#page-data').innerHTML = `<button class="btn btn-secondary back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回</button><div class="page-header"><span class="material-symbols-outlined">database</span>資料管理</div><div class="card"><h3>匯出資料</h3><p style="margin-bottom: 1rem; color: var(--text-light);">將您的所有資料匯出成 JSON 檔備份。</p><button id="export-data-btn" class="btn btn-primary"><span class="material-symbols-outlined">file_download</span>匯出 JSON</button></div><div class="card"><h3>匯入資料</h3><p style="margin-bottom: 1rem; color: var(--text-light);">從 JSON 檔匯入資料。注意：這將覆蓋您目前所有資料！</p><button id="import-data-btn" class="btn btn-secondary"><span class="material-symbols-outlined">file_upload</span>匯入 JSON</button><input type="file" id="import-file-input" accept=".json" style="display: none;"></div><div class="card"><h3>清除所有資料</h3><p style="margin-bottom: 1rem; color: var(--text-light);">永久刪除所有交易和類別，無法復原。</p><button id="clear-data-btn" class="btn btn-danger"><span class="material-symbols-outlined">delete_forever</span>清除資料</button></div>`;
+        $('#page-about').innerHTML = `<button class="btn btn-secondary back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回</button><div class="page-header"><span class="material-symbols-outlined">info</span>關於</div><div class="card"><h2>精美記帳 App v3.9.3</h2><p>一個功能齊全、美觀高效的單一 HTML 檔案記帳應用程式。</p><br><h4>核心特色：</h4><ul><li><strong>無需安裝</strong>：單一 HTML 檔案，下載即可使用。</li><li><strong>本地儲存</strong>：所有資料安全地儲存在您的瀏覽器中。</li><li><strong>響應式設計</strong>：完美適配手機、平板和桌面電腦，提供專屬優化介面。</li><li><strong>財務管理</strong>：整合預算、薪水、盈餘管理工具。</li><li><strong>主題模式</strong>：支援淺色與深色模式，並記憶您的選擇。</li><li><strong>資料自由</strong>：隨時可以匯出和匯入您的資料。</li></ul></div>`;
+        $('#page-calculator').innerHTML = `<button class="btn btn-secondary back-btn mobile-only-back-btn" data-target="others"><span class="material-symbols-outlined">arrow_back</span>返回</button><div class="page-header"><span class="material-symbols-outlined">calculate</span>理財計算機</div><div class="time-toggle" id="calculator-tabs" style="margin-bottom: 1.5rem;"><button class="time-toggle-btn active" data-calculator="compound">複利計算</button><button class="time-toggle-btn" data-calculator="loan">貸款月付金</button><button class="time-toggle-btn" data-calculator="roi">投資報酬率 (ROI)</button></div><div id="calculator-content"><div class="calculator-pane active" data-pane="compound"><div class="card"><h3>複利計算</h3><form id="compound-interest-form"><div class="form-group"><label for="ci-principal">初始本金 ($)</label><input type="number" id="ci-principal" value="10000" required></div><div class="form-group"><label for="ci-rate">年利率 (%)</label><input type="number" id="ci-rate" value="5" step="0.1" required></div><div class="form-group"><label for="ci-years">投資年期 (年)</label><input type="number" id="ci-years" value="10" required></div><div class="form-group"><label for="ci-compound-freq">複利計算頻率</label><select id="ci-compound-freq"><option value="1">每年</option><option value="2">每半年</option><option value="4">每季</option><option value="12" selected>每月</option></select></div><button type="submit" class="btn btn-primary" style="width:100%;">計算</button></form><div id="ci-result" style="margin-top: 1.5rem; display: none;"><h4>計算結果</h4><p>未來總值：<strong id="ci-future-value" style="font-size: 1.5rem; color: var(--primary-color);"></strong></p><p>總利息：<strong id="ci-total-interest"></strong></p></div></div></div><div class="calculator-pane" data-pane="loan" style="display:none;"><div class="card"><h3>貸款月付金計算</h3><form id="loan-form"><div class="form-group"><label for="loan-amount">貸款總額 ($)</label><input type="number" id="loan-amount" value="500000" required></div><div class="form-group"><label for="loan-rate">年利率 (%)</label><input type="number" id="loan-rate" value="3" step="0.01" required></div><div class="form-group"><label for="loan-term">貸款期數 (年)</label><input type="number" id="loan-term" value="30" required></div><button type="submit" class="btn btn-primary" style="width:100%;">計算</button></form><div id="loan-result" style="margin-top: 1.5rem; display: none;"><h4>計算結果</h4><p>每月應付金額：<strong id="loan-monthly-payment" style="font-size: 1.5rem; color: var(--primary-color);"></strong></p><p>總支付金額：<strong id="loan-total-payment"></strong></p><p>總利息支出：<strong id="loan-total-interest"></strong></p></div></div></div><div class="calculator-pane" data-pane="roi" style="display:none;"><div class="card"><h3>投資報酬率 (ROI) 計算</h3><form id="roi-form"><div class="form-group"><label for="roi-initial">初始投資金額 ($)</label><input type="number" id="roi-initial" value="10000" required></div><div class="form-group"><label for="roi-final">最終價值 ($)</label><input type="number" id="roi-final" value="15000" required></div><button type="submit" class="btn btn-primary" style="width:100%;">計算</button></form><div id="roi-result" style="margin-top: 1.5rem; display: none;"><h4>計算結果</h4><p>投資報酬率 (ROI)：<strong id="roi-percentage" style="font-size: 1.5rem; color: var(--primary-color);"></strong></p><p>淨利潤：<strong id="roi-net-profit"></strong></p></div></div></div></div>`;
+        $('#page-budgets').innerHTML = `<button class="btn btn-secondary back-btn" data-target="financial-management"><span class="material-symbols-outlined">arrow_back</span>返回財務管理</button><div class="page-header"><span class="material-symbols-outlined">savings</span>預算管理</div><div class="card"><div id="budget-form-container"></div><button id="save-budgets-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">儲存預算</button></div>`;
+        $('#page-salary').innerHTML = `<button class="btn btn-secondary back-btn" data-target="financial-management"><span class="material-symbols-outlined">arrow_back</span>返回財務管理</button><div class="page-header"><span class="material-symbols-outlined">payments</span>薪水管理</div><div class="card"><div class="form-group"><label for="salary-amount">每月主要薪資金額</label><div class="budget-input-area" style="margin-bottom:0"><span>$</span><input type="number" id="salary-amount" class="budget-input" placeholder="例如: 50000"></div></div><div class="form-group" style="margin-top:2rem"><label for="salary-category">選擇對應的薪資類別</label><select id="salary-category"></select></div><hr style="border:none; border-top: 1px solid var(--border-color); margin: 1.5rem 0;"><div class="form-group"><label>手動領薪功能</label><div class="radio-group"><input type="radio" id="claim-salary-off" name="claim-salary-toggle" value="off" checked><label for="claim-salary-off">關閉</label><input type="radio" id="claim-salary-on" name="claim-salary-toggle" value="on"><label for="claim-salary-on">啟用</label></div><p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">啟用後，儀表板將顯示一個按鈕，讓您手動領取當月薪資。</p></div><button id="save-salary-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">儲存設定</button></div>`;
+        $('#page-surplus').innerHTML = `<button class="btn btn-secondary back-btn" data-target="financial-management"><span class="material-symbols-outlined">arrow_back</span>返回財務管理</button><div class="page-header"><span class="material-symbols-outlined">trending_up</span>本月盈餘分析</div><div class="card text-center" style="text-align:center;"><h3 style="color:var(--text-light)">本月淨盈餘</h3><p id="surplus-total" style="font-size: 2.5rem; font-weight: 700; margin: 0.5rem 0;"></p></div><div class="card"><div id="surplus-breakdown"></div></div>`;
         $('#transaction-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h2 id="transaction-modal-title">新增交易</h2><span class="close-btn">×</span></div><form id="transaction-form"><input type="hidden" id="transaction-id"><div class="form-group"><div class="radio-group"><input type="radio" id="type-expense" name="type" value="expense" checked><label for="type-expense">支出</label><input type="radio" id="type-income" name="type" value="income"><label for="type-income">收入</label></div></div><div class="form-group"><label for="amount">金額</label><input type="number" id="amount" placeholder="0" required min="0" step="any"></div><div class="form-group"><label for="category">類別</label><select id="category" required></select></div><div class="form-group"><label for="date">日期</label><input type="date" id="date" required></div><div class="form-group"><label for="description">備註 (選填)</label><input type="text" id="description" placeholder="例如：晚餐、薪水"></div><div class="modal-actions"><button type="button" id="delete-transaction-btn" class="btn btn-danger" style="display:none;"><span class="material-symbols-outlined">delete</span>刪除</button><button type="submit" class="btn btn-primary"><span class="material-symbols-outlined">save</span>儲存</button></div></form></div>`;
         $('#category-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h2 id="category-modal-title">新增類別</h2><span class="close-btn">×</span></div><form id="category-form"><input type="hidden" id="category-id"><div class="form-group"><label for="category-name">類別名稱</label><input type="text" id="category-name" placeholder="例如：餐飲、交通" required></div><button type="submit" class="btn btn-primary" style="width:100%;">儲存</button></form></div>`;
+        $('#animation-modal').innerHTML = `<div class="modal-content"><div class="modal-header"><h2 id="animation-modal-title">本月交易動畫</h2><span class="close-btn" id="animation-close-btn">×</span></div><div class="animation-display-area"><div id="animation-tx-item-container"></div></div><div class="animation-balance-area"><h4>運行餘額</h4><p id="animation-running-balance">$0</p></div><div class="progress-bar-container" style="margin-top:1rem; height:6px;"><div id="animation-progress-bar" class="animation-progress-bar"></div></div><div class="animation-controls"><button id="animation-play-pause-btn" class="btn btn-primary"><span class="material-symbols-outlined">play_arrow</span>播放</button><div class="speed-control"><label for="animation-speed-select" style="font-size:0.9rem">速度:</label><select id="animation-speed-select" class="btn-sm"><option value="2000">慢</option><option value="1500" selected>中</option><option value="800">快</option></select></div></div></div>`;
     }
 
     function updateAllDashboard() { renderDashboard(); }
@@ -484,6 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateAllReports() { populateReportSelectors(); renderReportData(); }
     
     function renderDashboard() {
+        renderDashboardSalaryClaim();
         const period = $('#page-dashboard .time-toggle-btn.active').dataset.period;
         const now = new Date();
         let filteredTransactions;
@@ -508,52 +571,65 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             netIncomeEl.style.color = netIncome < 0 ? style.getPropertyValue('--expense-color') : style.getPropertyValue('--income-color');
         }
-
+        
+        renderDashboardBudgetTracking();
         renderDashboardChart(period);
     }
     
+    function highlightText(text, term) {
+        if (!term || !text) return text || '';
+        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+        return text.replace(regex, `<mark>$1</mark>`);
+    }
+
     function renderTransactions() {
         const container = $('#transaction-list-container');
         container.innerHTML = '';
         const searchTerm = $('#search-input').value.toLowerCase();
         const activeCategoryTag = $('#category-filter-container .filter-tag.active');
         const categoryId = activeCategoryTag ? activeCategoryTag.dataset.id : null;
+
         const filtered = data.transactions.filter(t => {
             const categoryName = (data.categories.find(c => c.id == t.category)?.name || '未分類').toLowerCase();
             const description = (t.description || '').toLowerCase();
-            const searchMatch = description.includes(searchTerm) || categoryName.includes(searchTerm);
+            const searchMatch = !searchTerm || description.includes(searchTerm) || categoryName.includes(searchTerm);
             const categoryMatch = !categoryId || categoryId === 'all' || t.category == categoryId;
             return searchMatch && categoryMatch;
         });
+
         if (filtered.length === 0) {
             container.innerHTML = `<div class="no-data"><span class="material-symbols-outlined">search_off</span><p>找不到符合條件的交易紀錄。</p></div>`;
             return;
         }
-        const grouped = filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).reduce((acc, t) => { (acc[t.date] = acc[t.date] || []).push(t); return acc; }, {});
-        for (const date in grouped) {
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'transaction-group';
-            groupDiv.innerHTML = `<div class="transaction-group-header">${date}</div>`;
-            grouped[date].forEach(t => {
-                const item = document.createElement('div'); item.className = 'transaction-list-item'; item.dataset.id = t.id;
-                const categoryName = data.categories.find(c => c.id == t.category)?.name || '未分類';
-                item.innerHTML = `
-                    <div class="transaction-icon ${t.type}">
-                        <span class="material-symbols-outlined">${t.type === 'income' ? 'arrow_upward' : 'arrow_downward'}</span>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="description">${t.description || '<i>無備註</i>'}</div>
-                        <div class="category-tag">${categoryName}</div>
-                    </div>
-                    <div class="transaction-info">
-                        <div class="amount ${t.type}">${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}</div>
-                        <div class="date">${t.date.slice(5)}</div>
-                    </div>`;
-                item.addEventListener('click', () => openTransactionModal(t.id));
-                groupDiv.appendChild(item);
-            });
-            container.appendChild(groupDiv);
-        }
+
+        filtered.sort((a, b) => a.order - b.order);
+        
+        filtered.forEach(t => {
+            const item = document.createElement('div');
+            item.className = 'transaction-list-item';
+            item.dataset.id = t.id;
+            item.draggable = true;
+            
+            const categoryName = data.categories.find(c => c.id == t.category)?.name || '未分類';
+            const displayDescription = highlightText(t.description || '<i>無備註</i>', searchTerm);
+            const displayCategory = highlightText(categoryName, searchTerm);
+
+            item.innerHTML = `
+                <div class="transaction-icon ${t.type}">
+                    <span class="material-symbols-outlined">${t.type === 'income' ? 'arrow_upward' : 'arrow_downward'}</span>
+                </div>
+                <div class="transaction-details">
+                    <div class="description">${displayDescription}</div>
+                    <div class="category-tag">${displayCategory}</div>
+                </div>
+                <div class="transaction-info">
+                    <div class="amount ${t.type}">${t.type === 'income' ? '+' : '-'}${formatCurrency(t.amount)}</div>
+                    <div class="date">${t.date}</div>
+                </div>`;
+            item.addEventListener('click', () => openTransactionModal(t.id));
+            container.appendChild(item);
+        });
     }
 
     function renderCategoryFilters() {
@@ -561,16 +637,18 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = `<span class="filter-tag active" data-id="all">全部</span>`;
         data.categories.forEach(c => { container.innerHTML += `<span class="filter-tag" data-id="${c.id}">${c.name}</span>`; });
     }
+
     function renderCategories() {
         const list = $('#category-list');
         list.innerHTML = '';
         if (data.categories.length === 0) { list.innerHTML = `<div class="no-data"><span class="material-symbols-outlined">category</span><p>尚無自訂類別</p></div>`; return; }
         data.categories.forEach(c => {
-            const item = document.createElement('div'); item.className = 'category-list-item';
+            const item = document.createElement('div'); item.className = 'transaction-list-item'; item.style.cursor = 'default';
             item.innerHTML = `<span>${c.name}</span><div><button class="btn btn-sm btn-secondary edit-category-btn" data-id="${c.id}"><span class="material-symbols-outlined" style="margin:0;">edit</span></button><button class="btn btn-sm btn-danger delete-category-btn" data-id="${c.id}"><span class="material-symbols-outlined" style="margin:0;">delete</span></button></div>`;
             list.appendChild(item);
         });
     }
+
     function populateReportSelectors() {
         const yearSelectMonth = $('#report-month-year-select'); 
         const yearSelectYearly = $('#report-year-select');
@@ -582,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!transactionYears.includes(currentYear)) { transactionYears.push(currentYear); }
         const years = [...new Set(transactionYears)].sort((a,b) => b-a);
         
-        const yearOptions = years.map(y => `<option value="${y}">${y}年</option>`).join('');
+        const yearOptions = years.length > 0 ? years.map(y => `<option value="${y}">${y}年</option>`).join('') : `<option value="${currentYear}">${currentYear}年</option>`;
         yearSelectMonth.innerHTML = yearOptions;
         yearSelectYearly.innerHTML = yearOptions;
         
@@ -596,6 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
         monthSelect.value = now.getMonth() + 1;
         dateSelect.valueAsDate = now;
     }
+
     function renderReportData() {
         const activeTab = $('#report-tabs .active').dataset.reportType;
         let filtered = [];
@@ -626,6 +705,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('#report-stats-results').innerHTML = `<div class="stat-item"><h4>總收入</h4><p class="income">${formatCurrency(income)}</p></div><div class="stat-item"><h4>總支出</h4><p class="expense">${formatCurrency(expense)}</p></div><div class="stat-item"><h4>淨收支</h4><p class="balance">${formatCurrency(balance)}</p></div>`;
         renderCategoryPieChart(filtered.filter(t => t.type === 'expense'), chartTitlePrefix);
     }
+    
     function renderDashboardChart(period) {
         const ctx = $('#dashboard-chart').getContext('2d'); if (chartInstances.dashboard) chartInstances.dashboard.destroy();
         const style = getComputedStyle(document.documentElement);
@@ -655,6 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         chartInstances.dashboard = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [ { label: '收入', data: incomeData, borderColor: style.getPropertyValue('--income-color'), backgroundColor: style.getPropertyValue('--income-color')+'20', fill: true, tension: 0.3 }, { label: '支出', data: expenseData, borderColor: style.getPropertyValue('--expense-color'), backgroundColor: style.getPropertyValue('--expense-color')+'20', fill: true, tension: 0.3 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: style.getPropertyValue('--border-color') }, ticks: { color: style.getPropertyValue('--text-light') } }, x: { grid: { color: style.getPropertyValue('--border-color') }, ticks: { color: style.getPropertyValue('--text-light') } } }, plugins: { legend: { labels: { color: style.getPropertyValue('--text-color') } } } } });
     }
+    
     function renderCategoryPieChart(expenses, titlePrefix) {
         const container = $('#category-pie-chart').parentElement; const canvas = $('#category-pie-chart'); const noDataHTML = `<div class="no-data" style="position: absolute; top: 40%; left:0; right: 0;"><p>該範圍無支出紀錄</p></div>`;
         const style = getComputedStyle(document.documentElement);
@@ -671,6 +752,187 @@ document.addEventListener('DOMContentLoaded', () => {
         }, {});
         chartInstances.pie = new Chart(canvas.getContext('2d'), { type: 'pie', data: { labels: Object.keys(expenseByCategory), datasets: [{ data: Object.values(expenseByCategory), backgroundColor: ['#58a6ff', '#50e3c2', '#f5a623', '#bd10e0', '#f85149', '#9b59b6', '#34495e', '#1abc9c', '#f1c40f', '#d35400'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { color: style.getPropertyValue('--text-color') } } } } });
     }
+
+    function renderBudgets() {
+        const container = $('#budget-form-container');
+        container.innerHTML = '';
+        const expenseCategories = data.categories.filter(c => {
+            const isUsedAsExpense = data.transactions.some(t => t.category === c.id && t.type === 'expense');
+            const isUsedAsIncome = data.transactions.some(t => t.category === c.id && t.type === 'income');
+            return isUsedAsExpense || !isUsedAsIncome;
+        });
+
+        if (expenseCategories.length === 0) {
+            container.innerHTML = `<p class="no-data">請先新增支出類別以設定預算。</p>`;
+            return;
+        }
+        
+        const now = new Date();
+        const monthStr = now.toISOString().slice(0, 7);
+        const monthlyTransactions = data.transactions.filter(t => t.date.startsWith(monthStr) && t.type === 'expense');
+
+        expenseCategories.forEach(c => {
+            const budgetAmount = data.budgets[c.id] || 0;
+            const spentAmount = monthlyTransactions.filter(t => t.category == c.id).reduce((sum, t) => sum + t.amount, 0);
+            const remaining = budgetAmount - spentAmount;
+            const percentage = budgetAmount > 0 ? Math.min((spentAmount / budgetAmount) * 100, 100) : 0;
+            
+            let progressBarClass = 'progress-bar';
+            if (percentage >= 100) progressBarClass += ' danger';
+            else if (percentage > 80) progressBarClass += ' warning';
+            
+            let remainingClass = 'budget-remaining';
+            if (remaining < 0) remainingClass += ' negative';
+
+            const budgetCardHTML = `
+                <div class="budget-card">
+                    <div class="budget-card-header">${c.name}</div>
+                    <div class="budget-card-body">
+                        <div class="budget-input-area">
+                            <span>$</span>
+                            <input type="number" class="budget-input" data-id="${c.id}" placeholder="點此設定預算" value="${budgetAmount > 0 ? budgetAmount : ''}" min="0" step="any">
+                        </div>
+                        <div class="budget-progress-area">
+                             <div class="progress-bar-container">
+                                <div class="${progressBarClass}" style="width: ${percentage}%;"></div>
+                            </div>
+                            <div class="budget-summary-text">
+                                <span>已用: ${formatCurrency(spentAmount)}</span>
+                                <span class="${remainingClass}">剩餘: ${formatCurrency(remaining)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += budgetCardHTML;
+        });
+    }
+    
+    function renderDashboardSalaryClaim() {
+        const container = $('#salary-claim-container');
+        container.innerHTML = '';
+        if (!data.salary.showClaimButton) {
+            return;
+        }
+
+        const now = new Date();
+        const currentMonthStr = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+        const isClaimed = data.salary.lastClaimedMonth === currentMonthStr;
+        const isConfigured = data.salary.amount > 0 && data.salary.categoryId;
+
+        let buttonHTML;
+        let reclaimHTML = '';
+
+        if (!isConfigured) {
+            buttonHTML = `<button class="btn btn-primary" disabled>請先設定薪資金額與類別</button>`;
+        } else if (isClaimed) {
+            buttonHTML = `<button class="btn btn-primary" disabled><span class="material-symbols-outlined">check_circle</span>本月薪資已領取</button>`;
+            reclaimHTML = `<div style="text-align: center; margin-top: 0.5rem;">
+                <a href="#" id="reclaim-salary-btn" style="font-size: 0.9rem; color: var(--primary-color); text-decoration: underline;">撤銷上次領取</a>
+            </div>`;
+        } else {
+            buttonHTML = `<button id="claim-salary-btn" class="btn btn-primary"><span class="material-symbols-outlined">payments</span>領取本月薪資 (${formatCurrency(data.salary.amount)})</button>`;
+        }
+
+        container.innerHTML = `<div class="card">${buttonHTML}${reclaimHTML}</div>`;
+    }
+
+    function renderDashboardBudgetTracking() {
+        const container = $('#budget-tracking-container');
+        container.innerHTML = '<h3>本月預算追蹤</h3>';
+        
+        const budgetedCategories = Object.keys(data.budgets).filter(id => data.budgets[id] > 0);
+
+        if (budgetedCategories.length === 0) {
+            container.innerHTML += '<p style="color: var(--text-light); font-size: 0.9rem;">尚未設定任何預算。<br><a href="#" id="go-to-budgets-from-dashboard">點此設定</a></p>';
+            return;
+        }
+
+        const now = new Date();
+        const monthStr = now.toISOString().slice(0, 7);
+        const monthlyTransactions = data.transactions.filter(t => t.date.startsWith(monthStr) && t.type === 'expense');
+        
+        budgetedCategories.forEach(id => {
+            const category = data.categories.find(c => c.id == id);
+            if (!category) return;
+
+            const budgetAmount = data.budgets[id];
+            const spentAmount = monthlyTransactions
+                .filter(t => t.category == id)
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const percentage = budgetAmount > 0 ? Math.min((spentAmount / budgetAmount) * 100, 100) : 0;
+            let progressBarClass = 'progress-bar';
+            if (percentage >= 100) progressBarClass += ' danger';
+            else if (percentage > 80) progressBarClass += ' warning';
+            
+            container.innerHTML += `
+                <div class="budget-item">
+                    <label>${category.name}</label>
+                    <div class="progress-bar-container">
+                        <div class="${progressBarClass}" style="width: ${percentage}%;"></div>
+                    </div>
+                    <div class="budget-text">
+                        <span>${formatCurrency(spentAmount)}</span>
+                        <span>${formatCurrency(budgetAmount)}</span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function renderSalaryManagement() {
+        const amountInput = $('#salary-amount');
+        const categorySelect = $('#salary-category');
+        amountInput.value = data.salary.amount > 0 ? data.salary.amount : '';
+        
+        const incomeCategories = data.categories.filter(c => {
+            const isUsedAsIncome = data.transactions.some(t => t.category === c.id && t.type === 'income');
+            const isUsedAsExpense = data.transactions.some(t => t.category === c.id && t.type === 'expense');
+            return isUsedAsIncome || !isUsedAsExpense;
+        });
+        
+        categorySelect.innerHTML = '<option value="">-- 請選擇 --</option>' + incomeCategories.map(c => 
+            `<option value="${c.id}" ${data.salary.categoryId == c.id ? 'selected' : ''}>${c.name}</option>`
+        ).join('');
+        
+        if (data.salary.showClaimButton) {
+            $('#claim-salary-on').checked = true;
+        } else {
+            $('#claim-salary-off').checked = true;
+        }
+    }
+    
+    function renderSurplusManagement() {
+        const now = new Date();
+        const monthStr = now.toISOString().slice(0, 7);
+        const monthlyTransactions = data.transactions.filter(t => t.date.startsWith(monthStr));
+        
+        const salaryAmount = data.salary.amount || 0;
+        const otherIncome = monthlyTransactions
+            .filter(t => t.type === 'income' && t.category != data.salary.categoryId)
+            .reduce((sum, t) => sum + t.amount, 0);
+        const totalExpenses = monthlyTransactions
+            .filter(t => t.type === 'expense')
+            .reduce((sum, t) => sum + t.amount, 0);
+        
+        const totalIncome = salaryAmount + otherIncome;
+        const surplus = totalIncome - totalExpenses;
+        
+        const surplusTotalEl = $('#surplus-total');
+        surplusTotalEl.textContent = formatCurrency(surplus);
+        surplusTotalEl.style.color = surplus >= 0 ? 'var(--income-color)' : 'var(--expense-color)';
+        
+        const breakdownContainer = $('#surplus-breakdown');
+        breakdownContainer.innerHTML = `
+            <div class="stat-item"><h4>設定薪水</h4><p class="income">${formatCurrency(salaryAmount)}</p></div>
+            <div class="stat-item"><h4>其他收入</h4><p class="income">${formatCurrency(otherIncome)}</p></div>
+            <hr style="grid-column: 1 / -1; border: none; border-top: 1px solid var(--border-color); margin: 0.5rem 0;">
+            <div class="stat-item"><h4>總收入</h4><p class="income" style="font-weight:700;">${formatCurrency(totalIncome)}</p></div>
+            <div class="stat-item"><h4>總支出</h4><p class="expense" style="font-weight:700;">${formatCurrency(totalExpenses)}</p></div>
+        `;
+    }
+
     function openModal(modalId) { $(`#${modalId}`).classList.add('active'); }
     function closeModal(modalId) { $(`#${modalId}`).classList.remove('active'); }
     function openTransactionModal(transactionId = null) {
@@ -698,23 +960,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         openModal('category-modal');
     }
+    
     function setupEventListeners() {
         document.body.addEventListener('click', e => {
             const navBtn = e.target.closest('.nav-btn');
             if (navBtn) {
                 const pageId = navBtn.dataset.page;
-                const isSubPage = ['categories', 'data', 'about', 'calculator', 'changelog'].includes(pageId);
+                const mainPages = ['dashboard', 'transactions', 'reports', 'financial-management', 'others'];
+                const desktopNavPages = ['categories', 'calculator'];
+                const isSubPage = !mainPages.includes(pageId) && !desktopNavPages.includes(pageId);
                 navigateTo(pageId, isSubPage);
             }
+            const fmSubPageBtn = e.target.closest('[data-target-page]');
+            if(fmSubPageBtn) {
+                navigateTo(fmSubPageBtn.dataset.targetPage, true);
+            }
+
             if (e.target.closest('#nav-add-mobile') || e.target.closest('#nav-add-desktop')) openTransactionModal();
+            if (e.target.closest('#go-to-financial-management-btn')) navigateTo('financial-management');
             if (e.target.closest('#go-to-categories-btn')) navigateTo('categories', true);
             if (e.target.closest('#go-to-data-btn')) navigateTo('data', true);
             if (e.target.closest('#go-to-about-btn')) navigateTo('about', true);
             if (e.target.closest('#go-to-calculator-btn')) navigateTo('calculator', true);
-            if (e.target.closest('#go-to-changelog-btn')) navigateTo('changelog', true);
+            
+            if (e.target.closest('#save-budgets-btn')) handleSaveBudgets();
+            if (e.target.closest('#save-salary-btn')) handleSaveSalary();
+            if (e.target.closest('#claim-salary-btn')) handleClaimSalary();
+            if (e.target.closest('#reclaim-salary-btn')) { e.preventDefault(); handleReclaimSalary(); }
+
+            // Animation
+            if (e.target.closest('#play-animation-btn')) startAnimation();
+            if (e.target.closest('#animation-play-pause-btn')) togglePlayPause();
+            if (e.target.closest('#animation-close-btn')) closeAnimation();
+
+            if (e.target.closest('#go-to-budgets-from-dashboard')) {
+                e.preventDefault(); 
+                if (window.innerWidth <= 800) navigateTo('budgets', true);
+                else navigateTo('budgets');
+            }
+
             const backBtn = e.target.closest('.back-btn'); if (backBtn) navigateTo(backBtn.dataset.target);
-            if (e.target.matches('.close-btn')) closeModal(e.target.closest('.modal').id);
+            if (e.target.matches('.close-btn') && !e.target.closest('#animation-modal')) closeModal(e.target.closest('.modal').id);
             if (e.target.matches('.modal')) closeModal(e.target.id);
+
             if (e.target.closest('#add-category-btn')) openCategoryModal();
             const editCatBtn = e.target.closest('.edit-category-btn'); if (editCatBtn) openCategoryModal(parseInt(editCatBtn.dataset.id));
             const deleteCatBtn = e.target.closest('.delete-category-btn'); if (deleteCatBtn) handleDeleteCategory(parseInt(deleteCatBtn.dataset.id));
@@ -747,6 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target.id === 'loan-form') { e.preventDefault(); const P = parseFloat($('#loan-amount').value); const annualRate = parseFloat($('#loan-rate').value) / 100; const termYears = parseFloat($('#loan-term').value); const r = annualRate / 12; const n = termYears * 12; if (r > 0) { const M = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1); const totalPayment = M * n; const totalInterest = totalPayment - P; $('#loan-monthly-payment').textContent = formatCurrency(M); $('#loan-total-payment').textContent = formatCurrency(totalPayment); $('#loan-total-interest').textContent = formatCurrency(totalInterest); } else { $('#loan-monthly-payment').textContent = formatCurrency(P/n); $('#loan-total-payment').textContent = formatCurrency(P); $('#loan-total-interest').textContent = formatCurrency(0); } $('#loan-result').style.display = 'block'; }
             if (e.target.id === 'roi-form') { e.preventDefault(); const initial = parseFloat($('#roi-initial').value); const final = parseFloat($('#roi-final').value); if (initial > 0) { const netProfit = final - initial; const roi = (netProfit / initial) * 100; $('#roi-percentage').textContent = `${roi.toFixed(2)} %`; $('#roi-net-profit').textContent = formatCurrency(netProfit); } else { $('#roi-percentage').textContent = 'N/A'; $('#roi-net-profit').textContent = 'N/A'; } $('#roi-result').style.display = 'block'; }
         });
+        
         $('#search-input').addEventListener('input', renderTransactions);
         $('#category-filter-container').addEventListener('click', e => {
             if(e.target.matches('.filter-tag')) { $$('#category-filter-container .filter-tag').forEach(tag => tag.classList.remove('active')); e.target.classList.add('active'); renderTransactions(); }
@@ -757,28 +1046,270 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('change', e => {
             if (e.target.matches('#report-month-year-select, #report-month-select, #report-year-select, #report-date-select')) renderReportData();
             if (e.target.matches('#import-file-input')) importData(e);
+            if (e.target.id === 'animation-speed-select') changeAnimationSpeed();
+        });
+        
+        const transactionListContainer = $('#transaction-list-container');
+        transactionListContainer.addEventListener('dragstart', e => {
+            draggedItem = e.target.closest('.transaction-list-item');
+            if(draggedItem) setTimeout(() => draggedItem.classList.add('dragging'), 0);
+        });
+        transactionListContainer.addEventListener('dragend', () => {
+            if(draggedItem) draggedItem.classList.remove('dragging');
+            draggedItem = null;
+        });
+        transactionListContainer.addEventListener('dragover', e => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(transactionListContainer, e.clientY);
+            $$('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            if(afterElement) afterElement.classList.add('drag-over');
+        });
+        transactionListContainer.addEventListener('drop', e => {
+            e.preventDefault();
+            $$('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            if (!draggedItem) return;
+            const afterElement = getDragAfterElement(transactionListContainer, e.clientY);
+            const draggedId = parseInt(draggedItem.dataset.id);
+            const draggedTx = data.transactions.find(t => t.id === draggedId);
+            const oldIndex = data.transactions.findIndex(t => t.id === draggedId);
+            if (oldIndex > -1) data.transactions.splice(oldIndex, 1);
+            if (afterElement == null) {
+                data.transactions.push(draggedTx);
+            } else {
+                const afterId = parseInt(afterElement.dataset.id);
+                const dropIndex = data.transactions.findIndex(t => t.id === afterId);
+                data.transactions.splice(dropIndex, 0, draggedTx);
+            }
+            reindexOrder(); saveData(); renderTransactions();
         });
     }
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.transaction-list-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
     function handleTransactionFormSubmit(e) {
         e.preventDefault(); const id = $('#transaction-id').value;
         const newTransaction = { id: id ? parseInt(id) : Date.now(), type: $('input[name="type"]:checked').value, amount: parseFloat($('#amount').value), category: parseInt($('#category').value), date: $('#date').value, description: $('#description').value.trim() };
-        if (id) { data.transactions[data.transactions.findIndex(t => t.id == id)] = newTransaction; } else { data.transactions.push(newTransaction); }
+        if (id) { 
+            const index = data.transactions.findIndex(t => t.id == id);
+            newTransaction.order = data.transactions[index].order;
+            data.transactions[index] = newTransaction;
+        } else { 
+            data.transactions.unshift(newTransaction);
+            reindexOrder();
+        }
         saveData(); closeModal('transaction-modal'); updateAll();
     }
     function handleDeleteTransaction() {
         if (!confirm('您確定要刪除這筆交易嗎？此操作無法復原。')) return;
-        const id = parseInt($('#transaction-id').value); data.transactions = data.transactions.filter(t => t.id !== id);
+        const id = parseInt($('#transaction-id').value); 
+        data.transactions = data.transactions.filter(t => t.id !== id);
+        reindexOrder();
         saveData(); closeModal('transaction-modal'); updateAll();
     }
     function handleCategoryFormSubmit(e) {
         e.preventDefault(); const id = $('#category-id').value; const name = $('#category-name').value.trim(); if (!name) return;
         if (id) { data.categories.find(c => c.id == id).name = name; } else { data.categories.push({ id: Date.now(), name: name }); }
-        saveData(); renderCategories(); closeModal('category-modal');
+        saveData(); updateAll(); closeModal('category-modal');
     }
     function handleDeleteCategory(id) {
         if (!confirm('確定要刪除這個類別嗎？使用此類別的交易將被標示為「未分類」。')) return;
-        data.categories = data.categories.filter(c => c.id !== id); saveData(); updateAll();
+        data.categories = data.categories.filter(c => c.id !== id); 
+        delete data.budgets[id];
+        if (data.salary.categoryId == id) {
+            data.salary.categoryId = null;
+        }
+        saveData(); updateAll();
     }
+    function handleSaveBudgets() {
+        $$('.budget-input').forEach(input => {
+            const id = input.dataset.id;
+            const amount = parseFloat(input.value);
+            if (amount > 0) {
+                data.budgets[id] = amount;
+            } else {
+                delete data.budgets[id];
+            }
+        });
+        saveData();
+        alert('預算已儲存！');
+        navigateTo('dashboard');
+    }
+    function handleSaveSalary() {
+        const amount = parseFloat($('#salary-amount').value);
+        const categoryId = $('#salary-category').value;
+        data.salary.amount = amount > 0 ? amount : 0;
+        data.salary.categoryId = categoryId ? parseInt(categoryId) : null;
+        data.salary.showClaimButton = $('#claim-salary-on').checked;
+        saveData();
+        alert('薪水設定已儲存！');
+        navigateTo('financial-management');
+    }
+
+    function handleClaimSalary() {
+        if (!data.salary.amount || !data.salary.categoryId) {
+            alert('薪資設定不完整，無法領取。');
+            return;
+        }
+        const now = new Date();
+        const currentMonthStr = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+
+        if (data.salary.lastClaimedMonth === currentMonthStr) {
+            alert('本月薪資已經領取過了。');
+            return;
+        }
+        
+        const salaryCategoryName = data.categories.find(c => c.id == data.salary.categoryId)?.name || '薪資';
+
+        const newTransaction = {
+            id: Date.now(),
+            type: 'income',
+            amount: data.salary.amount,
+            category: data.salary.categoryId,
+            date: now.toISOString().split('T')[0],
+            description: `${salaryCategoryName}`,
+            isClaimedSalary: true
+        };
+        
+        data.transactions.unshift(newTransaction);
+        data.salary.lastClaimedMonth = currentMonthStr;
+        reindexOrder();
+        saveData();
+        alert('薪資已領取！');
+        updateAll();
+    }
+
+    function handleReclaimSalary() {
+        if (!confirm('確定要撤銷上次領取的薪資嗎？這將會刪除對應的交易紀錄。')) {
+            return;
+        }
+        const now = new Date();
+        const currentMonthStr = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+
+        const transactionIndex = data.transactions.findIndex(t => 
+            t.isClaimedSalary === true && t.date.startsWith(currentMonthStr)
+        );
+
+        if (transactionIndex > -1) {
+            data.transactions.splice(transactionIndex, 1);
+            data.salary.lastClaimedMonth = null;
+            reindexOrder();
+            saveData();
+            alert('薪資領取已撤銷。');
+            updateAll();
+        } else {
+            alert('找不到可撤銷的薪資紀錄。');
+        }
+    }
+
+    // --- Animation Logic ---
+    function startAnimation() {
+        const now = new Date();
+        const monthStr = now.toISOString().slice(0, 7);
+        animationTransactions = data.transactions
+            .filter(t => t.date.startsWith(monthStr))
+            .sort((a,b) => new Date(a.date) - new Date(b.date));
+        
+        if (animationTransactions.length === 0) {
+            alert('本月尚無交易紀錄可播放動畫。');
+            return;
+        }
+
+        const firstDateOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        animationRunningBalance = data.transactions
+            .filter(t => new Date(t.date) < firstDateOfMonth)
+            .reduce((bal, t) => t.type === 'income' ? bal + t.amount : bal - t.amount, 0);
+
+        animationIndex = 0;
+        animationSpeed = parseInt($('#animation-speed-select').value);
+        
+        $('#animation-tx-item-container').innerHTML = '準備開始...';
+        $('#animation-running-balance').textContent = formatCurrency(animationRunningBalance);
+        $('#animation-progress-bar').style.width = '0%';
+        
+        const playPauseBtn = $('#animation-play-pause-btn');
+        playPauseBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>暫停`;
+
+        openModal('animation-modal');
+        playNextFrame();
+        animationInterval = setInterval(playNextFrame, animationSpeed);
+    }
+
+    function playNextFrame() {
+        if (animationIndex >= animationTransactions.length) {
+            togglePlayPause(true); // End of animation
+            return;
+        }
+
+        const tx = animationTransactions[animationIndex];
+        const categoryName = data.categories.find(c => c.id == tx.category)?.name || '未分類';
+        
+        if(tx.type === 'income') {
+            animationRunningBalance += tx.amount;
+        } else {
+            animationRunningBalance -= tx.amount;
+        }
+
+        const txHTML = `
+            <div class="tx-item">
+                <div class="tx-date">${tx.date}</div>
+                <div class="tx-desc">${tx.description || '<i>無備註</i>'} (${categoryName})</div>
+                <div class="tx-amount ${tx.type}">${tx.type === 'income' ? '+' : '-'}${formatCurrency(tx.amount)}</div>
+            </div>
+        `;
+        
+        $('#animation-tx-item-container').innerHTML = txHTML;
+        $('#animation-running-balance').textContent = formatCurrency(animationRunningBalance);
+        $('#animation-progress-bar').style.width = `${((animationIndex + 1) / animationTransactions.length) * 100}%`;
+
+        animationIndex++;
+    }
+
+    function togglePlayPause(isFinished = false) {
+        const playPauseBtn = $('#animation-play-pause-btn');
+        if (animationInterval) { // Is playing, so pause
+            clearInterval(animationInterval);
+            animationInterval = null;
+            playPauseBtn.innerHTML = `<span class="material-symbols-outlined">play_arrow</span>播放`;
+        } else { // Is paused or finished
+            if (animationIndex >= animationTransactions.length || isFinished) { // Replay
+                startAnimation();
+            } else { // Resume
+                 playPauseBtn.innerHTML = `<span class="material-symbols-outlined">pause</span>暫停`;
+                 animationInterval = setInterval(playNextFrame, animationSpeed);
+            }
+        }
+        if (isFinished) {
+            playPauseBtn.innerHTML = `<span class="material-symbols-outlined">replay</span>重播`;
+        }
+    }
+    
+    function changeAnimationSpeed() {
+        animationSpeed = parseInt($('#animation-speed-select').value);
+        if (animationInterval) { // If it's currently playing, restart the interval with new speed
+            clearInterval(animationInterval);
+            animationInterval = setInterval(playNextFrame, animationSpeed);
+        }
+    }
+    
+    function closeAnimation() {
+        if(animationInterval) clearInterval(animationInterval);
+        animationInterval = null;
+        closeModal('animation-modal');
+    }
+
+
+    // --- Data Management ---
     function exportData() {
         const dataStr = JSON.stringify(data, null, 2); const blob = new Blob([dataStr], {type: "application/json"});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `accounting-data-${new Date().toISOString().split('T')[0]}.json`;
@@ -790,7 +1321,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const importedData = JSON.parse(e.target.result);
                 if (importedData.transactions && importedData.categories) {
-                    if (confirm('確定要匯入資料嗎？這將會覆蓋現有所有資料。')) { data = importedData; saveData(); alert('資料匯入成功！'); updateAll(); }
+                    if (confirm('確定要匯入資料嗎？這將會覆蓋現有所有資料。')) { data = importedData; saveData(); alert('資料匯入成功！'); init(); }
                 } else alert('檔案格式不正確！');
             } catch (error) { alert('讀取檔案失敗，請確認是否為有效的 JSON 檔案。'); }
         };
@@ -799,11 +1330,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearAllData() {
         if (confirm('警告：此操作將永久刪除所有交易和類別資料，且無法復原。您確定要繼續嗎？')) {
             if (prompt('為防止誤觸，請輸入 "DELETE" 以確認刪除：') === 'DELETE') {
-                data.transactions = []; data.categories = [ { id: 1, name: '餐飲' }, { id: 2, name: '交通' }, { id: 3, name: '購物' }, { id: 4, name: '娛樂' }, { id: 5, name: '薪資' }, { id: 6, name: '投資' }, ];
-                saveData(); alert('所有資料已清除，應用程式已重設。'); navigateTo('dashboard');
+                data = {
+                    transactions: [],
+                    categories: [ { id: 1, name: '餐飲' }, { id: 2, name: '交通' }, { id: 3, name: '購物' }, { id: 4, name: '娛樂' }, { id: 5, name: '薪資' }, { id: 6, name: '投資' } ],
+                    budgets: {},
+                    salary: { amount: 0, categoryId: null, showClaimButton: false, lastClaimedMonth: null }
+                };
+                saveData(); alert('所有資料已清除，應用程式已重設。'); updateAll();
             } else { alert('輸入錯誤，操作已取消。'); }
         }
     }
+
     function formatCurrency(num) { return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 }); }
     init();
 });
